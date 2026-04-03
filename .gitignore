@@ -1,0 +1,21 @@
+# ================= FRONTEND =================
+node_modules/
+e-learningclient/node_modules/
+build/
+dist/
+.cache/
+
+# ================= BACKEND =================
+target/
+*.class
+
+# ================= ENV =================
+.env
+application.properties
+
+# ================= LOGS =================
+*.log
+
+# ================= OS =================
+.DS_Store
+Thumbs.db
