@@ -105,17 +105,17 @@ const Footer = () => {
               {[
                 {
                   href: 'https://youtube.com',
-                  Icon: TiSocialYoutubeCircular,
+                  Icon: FaYoutube,
                   label: 'YouTube',
                 },
                 {
                   href: 'https://instagram.com',
-                  Icon: TiSocialInstagramCircular,
+                  Icon: FaInstagram,
                   label: 'Instagram',
                 },
                 {
                   href: 'https://github.com',
-                  Icon: DiGithub,
+                  Icon: FaGithub,
                   label: 'GitHub',
                 },
               ].map(({ href, Icon, label }) => (
