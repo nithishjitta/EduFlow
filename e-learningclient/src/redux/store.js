@@ -23,4 +23,4 @@ const store = configureStore({
 
 export default store;
 
-export const server = 'https://eduflow-backend-dq11.onrender.com/api/v1';
+export const server = process.env.REACT_APP_SERVER_URL;
