@@ -43,6 +43,8 @@ public class PaymentController {
     }
     @Value("${stripe.secret-key}")
     private String stripeSecretKey;
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
 
     @PostMapping("/buy-course")
     public Map<String, String> buyCourse(@RequestBody Map<String, Object> data) throws Exception {
@@ -55,8 +57,8 @@ public class PaymentController {
         SessionCreateParams params =
                 SessionCreateParams.builder()
                         .setMode(SessionCreateParams.Mode.PAYMENT)
-                        .setSuccessUrl("http://localhost:3000/paymentsuccess")
-                        .setCancelUrl("http://localhost:3000/paymentfail")
+                        .setSuccessUrl(frontendUrl + "/paymentsuccess")
+                        .setCancelUrl(frontendUrl + "/paymentfail")
                         .addLineItem(
                                 SessionCreateParams.LineItem.builder()
                                         .setQuantity(1L)
