@@ -69,15 +69,15 @@ public class UserController {
     }
 
     // GET /api/v1/me
-    @GetMapping("/me")
-    public ResponseEntity<Map<String, Object>> getMyProfile(
-            @AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails == null) {
-            return ResponseEntity.ok(success("Not authenticated", null));
-        }
-        User user = userService.getProfile(userDetails.getUsername());
-        return ResponseEntity.ok(success(null, user));
+   @GetMapping("/me")
+public ResponseEntity<Map<String, Object>> getMyProfile(
+        @AuthenticationPrincipal UserDetails userDetails) {
+    if (userDetails == null) {
+        return ResponseEntity.status(401).body(Map.of("success", false, "message", "Not authenticated")); // ✅ 401
     }
+    User user = userService.getProfile(userDetails.getUsername());
+    return ResponseEntity.ok(success(null, user));
+}
 
     // DELETE /api/v1/me
     @DeleteMapping("/me")

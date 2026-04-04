@@ -1,4 +1,4 @@
-import React, { useEffect, lazy, Suspense } from 'react';
+import React, { useEffect, lazy, Suspense, startTransition } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast';
@@ -33,8 +33,8 @@ const RecommendedCourses = lazy(() => import('./components/Courses/RecommendedCo
 
 function App() {
   const { isAuthenticated, user, message, error, loading = true } = useSelector(
-  state => state.user
-);
+    state => state.user
+  );
 
   const dispatch = useDispatch();
 
@@ -50,20 +50,24 @@ function App() {
   }, [dispatch, error, message]);
 
   useEffect(() => {
-    dispatch(loadUser());
+    startTransition(() => {
+      dispatch(loadUser());
+    });
   }, [dispatch]);
 
   return (
-    <Router future={{
-    v7_startTransition: true,
-    v7_relativeSplatPath: true,
-  }}>
-      {loading ? (
-        <Loader />
-      ) : (
-        <>
-          <Header isAuthenticated={isAuthenticated} user={user} />
-          <Suspense fallback={<Loader />}>
+    <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
+      <Suspense fallback={<Loader />}>
+        {loading ? (
+          <Loader />
+        ) : (
+          <>
+            <Header isAuthenticated={isAuthenticated} user={user} />
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/courses" element={<Courses />} />
@@ -147,7 +151,11 @@ function App() {
               <Route
                 path="/admin/dashboard"
                 element={
-                  <ProtectedRoute adminRoute={true} isAuthenticated={isAuthenticated} isAdmin={user && user.role === 'admin'}>
+                  <ProtectedRoute
+                    adminRoute={true}
+                    isAuthenticated={isAuthenticated}
+                    isAdmin={user && user.role === 'admin'}
+                  >
                     <Dashboard />
                   </ProtectedRoute>
                 }
@@ -155,7 +163,11 @@ function App() {
               <Route
                 path="/admin/createcourse"
                 element={
-                  <ProtectedRoute adminRoute={true} isAuthenticated={isAuthenticated} isAdmin={user && user.role === 'admin'}>
+                  <ProtectedRoute
+                    adminRoute={true}
+                    isAuthenticated={isAuthenticated}
+                    isAdmin={user && user.role === 'admin'}
+                  >
                     <CreateCourse />
                   </ProtectedRoute>
                 }
@@ -163,7 +175,11 @@ function App() {
               <Route
                 path="/admin/courses"
                 element={
-                  <ProtectedRoute adminRoute={true} isAuthenticated={isAuthenticated} isAdmin={user && user.role === 'admin'}>
+                  <ProtectedRoute
+                    adminRoute={true}
+                    isAuthenticated={isAuthenticated}
+                    isAdmin={user && user.role === 'admin'}
+                  >
                     <AdminCourses />
                   </ProtectedRoute>
                 }
@@ -171,25 +187,29 @@ function App() {
               <Route
                 path="/admin/users"
                 element={
-                  <ProtectedRoute adminRoute={true} isAuthenticated={isAuthenticated} isAdmin={user && user.role === 'admin'}>
+                  <ProtectedRoute
+                    adminRoute={true}
+                    isAuthenticated={isAuthenticated}
+                    isAdmin={user && user.role === 'admin'}
+                  >
                     <Users />
                   </ProtectedRoute>
                 }
               />
             </Routes>
-          </Suspense>
-          <Footer />
-          <Toaster
-            toastOptions={{
-              style: {
-                fontFamily: "'DM Sans', sans-serif",
-                borderRadius: '10px',
-                fontSize: '14px',
-              },
-            }}
-          />
-        </>
-      )}
+            <Footer />
+            <Toaster
+              toastOptions={{
+                style: {
+                  fontFamily: "'DM Sans', sans-serif",
+                  borderRadius: '10px',
+                  fontSize: '14px',
+                },
+              }}
+            />
+          </>
+        )}
+      </Suspense>
     </Router>
   );
 }

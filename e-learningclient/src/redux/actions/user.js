@@ -38,6 +38,12 @@ export const loadUser = () => async dispatch => {
   try {
     dispatch({ type: 'loadUserRequest' });
     const { data } = await axios.get(`${server}/me`, { withCredentials: true });
+
+    if (!data.user) { // ✅ guard against null user
+      dispatch({ type: 'loadUserFail', payload: null });
+      return;
+    }
+
     dispatch({ type: 'loadUserSuccess', payload: data.user });
   } catch (error) {
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
