@@ -28,6 +28,7 @@ import {
 } from 'react-icons/fa';
 import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
+import { server } from '../../redux/store';
 
 export const categories = [
   'Web Development',
@@ -385,31 +386,37 @@ export const Course = ({
     if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
     return num.toString();
   };
+
+  // ✅ FIXED buyCourseHandler
   const buyCourseHandler = async () => {
-  try {
-    const { data: keyData } = await axios.get(
-      'https://eduflow-backend-dq11.onrender.com/api/v1/stripekey',
-      { withCredentials: true }  // ✅ add this too
-    );
+    try {
+      // Step 1: Get Stripe publishable key from backend
+      const { data: keyData } = await axios.get(`${server}/stripekey`, {
+        withCredentials: true,
+      });
 
-    const stripe = await loadStripe(keyData.key);
+      // Step 2: Load Stripe with the key
+      const stripe = await loadStripe(keyData.key);
 
-    const { data } = await axios.post(
-      'https://eduflow-backend-dq11.onrender.com/api/v1/buy-course',
-      { title, price },
-      { withCredentials: true }
-    );
+      // Step 3: Create checkout session — POST with body + credentials
+      const { data } = await axios.post(
+        `${server}/buy-course`,
+        { title, price },        // ✅ body as second arg
+        { withCredentials: true } // ✅ config as third arg
+      );
 
-    await stripe.redirectToCheckout({ sessionId: data.id });
+      // Step 4: Redirect to Stripe checkout
+      await stripe.redirectToCheckout({ sessionId: data.id });
 
-  } catch (error) {
-    if (error.response?.status === 403) {
-      toast.error('Please login to buy this course');
-    } else {
-      toast.error(error.response?.data?.message || 'Purchase failed');
+    } catch (error) {
+      if (error.response?.status === 403 || error.response?.status === 401) {
+        toast.error('Please login to buy this course');
+      } else {
+        toast.error(error.response?.data?.message || 'Purchase failed. Please try again.');
+      }
     }
-  }
-};
+  };
+
   return (
     <Box
       borderRadius="20px"
