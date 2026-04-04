@@ -387,13 +387,13 @@ export const Course = ({
   };
   const buyCourseHandler = async () => {
     const { data: keyData } = await axios.get(
-      'http://localhost:8080/api/v1/stripekey'
+      'https://eduflow-backend-dq11.onrender.com/api/v1/stripekey'
     );
 
     const stripe = await loadStripe(keyData.key);
 
     const { data } = await axios.post(
-      'http://localhost:8080/api/v1/buy-course',
+      'https://eduflow-backend-dq11.onrender.com/api/v1/buy-course',
       {
         title: title,
         price: price,
