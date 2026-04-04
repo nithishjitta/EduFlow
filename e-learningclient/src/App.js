@@ -32,9 +32,9 @@ const Users = lazy(() => import('./components/Admin/Users/Users'));
 const RecommendedCourses = lazy(() => import('./components/Courses/RecommendedCourses'));
 
 function App() {
-  const { isAuthenticated, user, message, error, loading } = useSelector(
-    state => state.user
-  );
+  const { isAuthenticated, user, message, error, loading = true } = useSelector(
+  state => state.user
+);
 
   const dispatch = useDispatch();
 
