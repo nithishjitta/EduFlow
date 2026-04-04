@@ -8,11 +8,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import React from 'react';
-import {
-  TiSocialYoutubeCircular,
-  TiSocialInstagramCircular,
-} from 'react-icons/ti';
-import { DiGithub } from 'react-icons/di';
 import { Link } from 'react-router-dom';
 
 const footerLinks = [
