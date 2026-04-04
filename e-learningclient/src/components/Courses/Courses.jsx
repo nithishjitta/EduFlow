@@ -386,25 +386,30 @@ export const Course = ({
     return num.toString();
   };
   const buyCourseHandler = async () => {
+  try {
     const { data: keyData } = await axios.get(
-      'https://eduflow-backend-dq11.onrender.com/api/v1/stripekey'
+      'https://eduflow-backend-dq11.onrender.com/api/v1/stripekey',
+      { withCredentials: true }  // ✅ add this too
     );
 
     const stripe = await loadStripe(keyData.key);
 
     const { data } = await axios.post(
       'https://eduflow-backend-dq11.onrender.com/api/v1/buy-course',
-      {
-        title: title,
-        price: price,
-      },
+      { title, price },
       { withCredentials: true }
     );
 
-    await stripe.redirectToCheckout({
-      sessionId: data.id,
-    });
-  };
+    await stripe.redirectToCheckout({ sessionId: data.id });
+
+  } catch (error) {
+    if (error.response?.status === 403) {
+      toast.error('Please login to buy this course');
+    } else {
+      toast.error(error.response?.data?.message || 'Purchase failed');
+    }
+  }
+};
   return (
     <Box
       borderRadius="20px"

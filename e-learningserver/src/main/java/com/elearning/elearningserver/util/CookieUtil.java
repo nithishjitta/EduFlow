@@ -4,8 +4,10 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
-
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import java.util.Arrays;
 
 @Component
@@ -15,24 +17,29 @@ public class CookieUtil {
     private String activeProfile;
 
     public void addTokenCookie(HttpServletResponse response, String token) {
-        Cookie cookie = new Cookie("token", token);
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(15 * 24 * 60 * 60); // 15 days
-        cookie.setPath("/");
-        // secure + sameSite=None in production
-        if ("prod".equalsIgnoreCase(activeProfile)) {
-            cookie.setSecure(true);
-        }
-        response.addCookie(cookie);
-    }
+    // ✅ Use ResponseCookie instead of Cookie — it supports SameSite
+    ResponseCookie cookie = ResponseCookie.from("token", token)
+        .httpOnly(true)
+        .maxAge(15 * 24 * 60 * 60) // 15 days
+        .path("/")
+        .secure(true)           // ✅ Required for SameSite=None
+        .sameSite("None")       // ✅ Required for cross-origin cookie
+        .build();
+
+    response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+}
 
     public void clearTokenCookie(HttpServletResponse response) {
-        Cookie cookie = new Cookie("token", null);
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-    }
+    ResponseCookie cookie = ResponseCookie.from("token", "")
+        .httpOnly(true)
+        .maxAge(0)
+        .path("/")
+        .secure(true)
+        .sameSite("None")
+        .build();
+
+    response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+}
 
     public String extractTokenFromCookies(HttpServletRequest request) {
         if (request.getCookies() == null) return null;

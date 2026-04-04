@@ -4,15 +4,14 @@ import axios from 'axios';
 export const login = (email, password) => async dispatch => {
   try {
     dispatch({ type: 'loginRequest' });
-    // Spring Boot UserController expects @RequestParam — send as form params
-    const params = new URLSearchParams();
-    params.append('email', email);
-    params.append('password', password);
 
-    const { data } = await axios.post(`${server}/login`, params, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      withCredentials: true,
-    });
+    const { data } = await axios.post(`${server}/login`, 
+      { email, password },  // ✅ send as JSON
+      {
+        headers: { 'Content-Type': 'application/json' }, // ✅ JSON header
+        withCredentials: true,
+      }
+    );
 
     dispatch({ type: 'loginSuccess', payload: data });
   } catch (error) {
