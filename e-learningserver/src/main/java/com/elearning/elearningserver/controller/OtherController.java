@@ -6,6 +6,7 @@ import com.elearning.elearningserver.service.EmailService;
 import com.elearning.elearningserver.service.StatsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators.Add;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,6 +39,11 @@ public class OtherController {
         emailService.sendEmail(contactEmail, "Contact from E-learning Platform", text);
 
         return ResponseEntity.ok(Map.of("success", true, "message", "Your Message Has Been Sent."));
+    }
+    // GET /api/v1/health
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, Object>> health() {
+        return ResponseEntity.ok(Map.of("status", "UP"));
     }
 
     // POST /api/v1/courserequest

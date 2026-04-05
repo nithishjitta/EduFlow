@@ -5,6 +5,9 @@ import App from './App';
 import { Provider as ReduxProvider } from 'react-redux';
 import store from './redux/store';
 
+fetch('https://eduflow-backend-dq11.onrender.com/api/v1/health')
+  .catch(() => {});
+  
 const theme = extendTheme({
   fonts: {
     heading: `'Syne', sans-serif`,
